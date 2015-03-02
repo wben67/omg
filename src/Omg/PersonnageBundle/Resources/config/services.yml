@@ -1,0 +1,4 @@
+services:
+#    omg_personnage.example:
+#        class: Omg\PersonnageBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

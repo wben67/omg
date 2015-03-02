@@ -1,0 +1,67 @@
+{% extends '::base.html.twig' %} 
+
+{% block body %} 
+
+{% set ObjNotFound = true %}
+
+<div class="results">
+	<div class="title">
+		Résultat(s) de la recherche
+	</div>
+	<div class="resultsbody" >
+	{% if competences %}
+		<div class="competence">
+			<div class="subtitle">
+				Compétence(s) trouvée(s)
+			</div>
+			<div class="listentities">
+			{% for competence in competences %}
+			{% set ObjNotFound = false %}
+				<p>
+					<a href="{{ path('omg_competence_show', { 'id': competence.id })}}">{{ competence.nom }} - {{ competence.description }}</a>
+				</p>
+			{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+	{% if maisons %}
+		<div class="competence">
+			<div class="subtitle">
+				Maison(s) trouvée(s)
+			</div>
+			<div class="listentities">
+			{% for maison in maisons %}
+			{% set ObjNotFound = false %}
+				<p>
+					<a href="{{ path('omg_maison_show', { 'id': maison.id })}}">{{ maison.nom }} - {{ maison.description }}</a>
+				</p>
+			{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+	{% if personnages %}
+		<div class="competence">
+			<div class="subtitle">
+				Personnage(s) trouvé(s)
+			</div>
+			<div class="listentities">
+			{% for personnage in personnages %}
+			{% set ObjNotFound = false %}
+				<p>
+					<a href="{{ path('omg_personnage_show', { 'id': personnage.id })}}">{{ personnage.nom }} - {{ personnage.description }}</a>
+				</p>
+			{% endfor %}
+		</div>
+	{% endif %}
+	</div>
+</div>
+
+{% if ObjNotFound %}
+<div class="FlashMessage" >
+	Aucune correspondance trouvée
+</div>
+{% endif %}
+
+{% endblock %}

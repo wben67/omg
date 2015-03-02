@@ -1,0 +1,752 @@
+Projet Web Avancé
+
+1 - Introduction
+
+Symfony est un framework composé d'un noyau central auquel on ajoute des "bundles".
+Les bundles sont comme des "plugins" ajoutant des fonctionnalités au noyau.
+Le développement de notre application consiste à ajouter des "bundles" personnalisés à notre noyau "symfony".
+Mais il existe des "bundles" libres et téléchargeables permettant d'ajouter des fonctionnalités au système
+sans avoir à les redévelopper. Nous installerons notamment un bundle gérant les menus.
+La distribution "symfony" de base comprend un certain nombre de bundles par défaut.
+Parmi ceux-ci: 
+	"doctrine", un bundle permettant la gestion et les interactions avec la base de données,
+	"twig", gestionnaire de template,
+	"form" permettant de générer des formulaires
+	
+Pour utiliser "symfony" et "doctrine" avec une base de données, il y a deux méthodes:
+	soit on crée notre modèle de données directement dans "mysql" (avec phpmyadmin" par exemple). On crée toutes tables, 
+	les contraintes et les jointures et ensuite on intègre cette définition dans "symfony".
+	
+	soit on crée les "entités" (entity) dans "symfony" (ce sont les objets "métiers", équivalent dans la plupart des cas
+	aux tables de notre base de données), on définit les relations entre elles (équivalent  des jointures) et on utilise
+	"doctrine" se charger de la création de la base de données. Pour un nouveau projet, cette solution semble plus 
+	adéquate. C'est donc celle-ci que nous utiliserons. Même si "doctrine" peut se charger de la création de la base de données
+	et des tables la composant, en environnement professionnel, il est tout de même préférable de créer la base de données et 
+	l'utilisateur permettant d'y accéder avant. Cela permet notamment d'avoir un utilisateur n'ayant pas tous les droits sur 
+	"mysql". On utilisera "symphony" uniquement pour créer les tables. Avec cette méthode, il existe plusieurs façon de définir
+	les entités et surtout les relations entre elles. Sans entrer dans les détail, nous utiliserons pour les relations la méthode
+	des "annotations". Ce sont des commentaires formatés permettant de décrire les relations et un certain nombre de
+	paramètres des entités. Ils sont utilisés par "doctrine" et "symfony" pour générer les tables de la base de données
+	et automatiser certains traitements sur ces objets (unicité, relations, contraintes, etc).
+
+Une des particularités de "Symfony" est de permettre de dissocier au maximum la partie "design" (template, html et css) 
+de la partie "métier" (actions vers la base de données et traitements spécifiques à notre application).
+
+Pour le développement, on s'occupera de la partie métier en premier lieu en générant des pages html simples.
+Une fois la logique applicative terminée, on pourra alors développer la partie "design" (css et amélioration des templates)
+
+2 - Installation de Symfony (accès internet nécessaire...)
+
+Se placer dans le répertoire de travail voulu.
+
+puis lancer les commandes:
+	curl -LsS http://symfony.com/installer > symfony.phar	// récupération de l'installeur de la dernière distribution symfony (version 2)
+	sudo mv symfony.phar /usr/local/bin/symfony 			// déplacer le fichier dans l'arborescence système pour plus de facilité
+	chmod a+x /usr/local/bin/symfony						// rendre exécutable le fichier téléchargé
+
+création du nouveau projet (qu'on appelle ici omg)
+	symfony new omg
+
+l'installeur télécharge alors les dernières versions de "Symfony2" et des "bundles" de la distribution de base.
+Il les place ici dans le sous-répertoire "omg" de notre répertoire de travail.
+A partir de maintenant, nous ne travaillerons plus que dans ce sous-répertoire.
+Les chemins seront relatives à celui-ci.
+
+2.1 installation de module complémentaire.
+
+Comme évoqué plus haut, nous allons utiliser un bundle supplémentaire permettant la gestion des menus.
+Il s'appelle 'KnpMenuBundle'. 
+
+Remarque: on peut retrouver une sélection de bundles disponibles sur le site: http://knpbundles.com/
+
+L'installation de ce bundle (et de certains autres) nécessite l'utilisation d'un composant supplémentaire: composer
+
+Il faut donc installer ce composant:
+
+	curl -sS https://getcomposer.org/installer | php 
+	sudo mv composer.phar /usr/local/bin/composer
+	
+Une fois installé, il faut lancer la commande:
+	composer require 'knplabs/knp-menu-bundle:~2.0'
+	
+Le bundle est téléchargé et il est intégré à notre application.
+
+
+2.2 Suppression de bunlde de démo.
+	La distribution de "symfony" arrive avec "bundle" de demo: AcmeDemoBundle.
+	Nous allons tout d'abord le supprimer.
+	
+	Pour le supprimer, il suffit de se reporter à la documentation "symfony": http://symfony.com/doc/current/cookbook/bundles/remove.html
+	
+3 - Développement
+
+3.1 - Définition et génération des entités
+
+3.1.1 - Paramétrage de la base de données.
+Comme vu auparavant, nous allons définir dans "mysql" la base du projet ainsi que l'utilisateur permettant d'y accéder en tant que gestionnaire.
+
+En utilisant, "phpmyadmin" sur la base mysql, le plus simple est de créer un utilisateur "omg", l'utilisateur proposant 
+alors de créer une base portant le même nom, avec tous les droits dessus.
+
+Pour le projet, on suppose que notre base se trouve sur le même serveur que notre application. 
+La base s'appelle "omg", l'utilisateur "omg" avec un mot de passe "gmo". Notre base est vide pour le moment. 
+C'est tout ce que nous avons à faire avec "mysql".
+
+3.1.2 Paramétrage "symfony"
+Il faut paramétrer notre application pour qu'elle accède à notre base.
+Cela se passe dans le fichier "app/config/parameters.yml":
+
+	# This file is auto-generated during the composer install
+	parameters:
+		database_driver: pdo_mysql
+		database_host: 127.0.0.1
+		database_port: null
+		database_name: omg
+		database_user: omg
+		database_password: gmo
+		mailer_transport: smtp
+		mailer_host: 127.0.0.1
+		mailer_user: null
+		mailer_password: null
+		locale: en
+		secret: e85cb30f15a96852e48077b82ebded2241ecf453
+
+On modifie les trois lignes database_name, database_user et database_password
+
+Nous sommes prêts à travailler avec l'environnement "symfony/doctrine"
+
+3.1.3 Définition des entités.
+A cette étape, il faut étudier les éléments (objets en php, entités pour symfony ou table pour mysql) dont on
+va avoir besoin.
+
+Dans le projet nous allons avoir besoin de 4 éléments: les personnages, les maisons, les compétences et les expériences.
+Les relations entre ces éléments peuvent se résumer ainsi:
+Un "Personnage" appartient à une "Maison" et une seule.
+Un "Personnage" a une "Expérience" et une seule
+Un "Personnage" possède plusieurs "Compétences". Le nombre maximum de compétences dépend de son "Expérience".
+Une "Maison" peut avoir plusieurs "Personnages" qui lui sont rattachés.
+Une "Compétence" peut être affectée à plusieurs "Personnages".
+Une "Expérience" peut être affectée à plusieurs "Personnages".
+
+Pour chaque objet, il faut déterminer les propriétés dont on a besoin 
+(un peu l'équivalent des champs des tables "mysql" même si ici on retrouve les références des jointures 
+ne sont pas explicitement définies en tant que propriétés des objets, on verra plus loin comment les définir
+à l'aide des annotations)
+	Experience
+		age: libellé de l'âge
+		experience: Expérience départ en nombre de points
+		
+	Competences
+		nom: nom de la compétence
+		description: description de la compétence
+		
+	Maison
+		nom: Nom de la maison
+		devise: Devise de la maison
+		blason: Description du blason
+		description: Description de la maison
+		
+	Personnage:
+		nom: Nom du personnage
+		description: Description du personnage
+		maison: Maison auquel il appartient
+		experience: Expérience du personnage
+		competences: liste des compétences du personnage
+		
+Remarque: pour utiliser tous les automatismes de "symfony"/"doctrine", tous les objets seront référencés par un identifiant
+unique dans chaque table. Pour simplifier au maximum le paramétrage et laisser le générateur s'occuper de ces identifiants,
+on utilisera le champ "id" pour tous les objets. Ce champ sera donc ajouter à tous les objets (et par conséquent à toutes les tables
+"mysql") automatiquement par "doctrine".
+		
+Ces éléments permettront de paramétrer les types de relations entre les entités de notre application.
+
+Pour créer les entités, on peut utiliser un générateur accessible en ligne de commande:
+	php app/console doctrine:generate:entity
+	
+Nous allons déclaré les entités au niveau "application" car elles sont communes à toutes ses parties.
+Cela signifie que nous utiliserons le bundle "AppBundle" pour déclarer ces entités.
+
+Pour la premier entité, cela donne:
+			php app/console doctrine:generate:entity
+
+
+			  Welcome to the Doctrine2 entity generator
+
+
+
+			This command helps you generate Doctrine2 entities.
+
+			First, you need to give the entity name you want to generate.
+			You must use the shortcut notation like AcmeBlogBundle:Post.
+
+			The Entity shortcut name: AppBundle:Experience
+
+			Determine the format to use for the mapping information.
+
+			Configuration format (yml, xml, php, or annotation) [annotation]:
+
+			Instead of starting with a blank entity, you can add some fields now.
+			Note that the primary key will be added automatically (named id).
+
+			Available types: array, simple_array, json_array, object,
+			boolean, integer, smallint, bigint, string, text, datetime, datetimetz,
+			date, time, decimal, float, blob, guid.
+
+			New field name (press <return> to stop adding fields): age
+			Field type [string]:
+			Field length [255]:
+
+			New field name (press <return> to stop adding fields): experience
+			Field type [string]: text
+
+			New field name (press <return> to stop adding fields):
+
+			Do you want to generate an empty repository class [no]?
+
+
+			  Summary before generation
+
+
+			You are going to generate a "AppBundle:Experience" Doctrine2 entity
+			using the "annotation" format.
+
+			Do you confirm generation [yes]?
+
+
+			  Entity generation
+
+
+			Generating the entity code: OK
+
+
+			  You can now start using the generated code!
+
+On fait de même pour l'entité "Competences" et "Maison".
+Pour l'objet "Personnage", c'est un peu plus compliqué: 3 champs sont des liens vers les autres entités.
+En effet, on ne stocke pas toute la définition de "Maison", "Experience" et "Competence" au niveau du personnage.
+On référence les objets, les jointures se chargeant alors des liaisons. De plus, pour les "compétences",
+si on veut respecter la troisième forme normale du modèle de données, nous sommes obligés d'utiliser une table
+pour faire la liaison entre les personnages et les compétences. "doctrine" permet de paramétrer tout ça à l'aide
+des annotations. Cependant le générateur d'entité lui ne permet pas de faire ce paramétrage directement.
+Pour éviter d'avoir à taper trop de code, on va déclarer les propriétés correspondantes avec un type quelconque (string[255] par exemple).
+on ira ensuite modifier manuellement le code pour paramétrer ces liaisons.
+
+Nos entités "brutes" sont générées. Il faut maintenant les adapter à nos spécifications.
+Les entités ayant été rattachées au bundle "AppBundle", les sources associés se trouvent dans
+src/AppBundle/Entity
+
+On voit que 4 fichiers "php" ont été générés: Competences.php, Experience.php, Maison.php, Personnage.php
+Ce sont en fait les sources des classes d'objets php permettant les accès aux entités.
+
+L'objet le plus est "Experience". Il n'a pas besoin d'être modifier.
+
+Pour l'objet "Maison" par contre, on a besoin de paramétrer et d'ajouter quelques fonctions qui peuvent être
+utiles à notre projet:
+	Il peut être intéressant de ne pas pouvoir supprimer une maison si au moins un personnage lui appartient.
+	De même il faut pouvoir éviter de créer une maison portant un nom de maison déjà existant.
+	De plus, pour pouvoir afficher la liste des personnages appartenant à une maison, il faut ajouter
+	une propriété "personnages" à "maison", propriété contenant la liste de personnages de la maison.
+	
+	
+Pour la contrainte d'unicité, cela est possible automatiquement grâce à la fonction "validator" de "symfony".
+Pour l'utiliser, il faut ajouter la ligne suivante en début de fichier source (dans la partie des "use"):
+
+		use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+		
+Ensuite en entête de la classe "Maison", il faut ajouter l'annotation suivante:
+
+		@UniqueEntity( fields="nom", message="Une maison avec ce nom existe déjà" )
+		
+Cette annotation demande à "symfony"/"doctrine" de vérifier l'unicité du champ "nom" dans la table "maison"
+avant chaque enregistrement dans la base. En cas d'erreur, "doctrine" lèvera une erreur avec le message défini.
+
+Pour récupérer les personnages appartenant à la "maison", il faut ajouter une propriété "personnages" à la
+classe "Maison". Cette propriété est d'un type particulier car il s'agit d'un tableau d'objets.
+Pour "doctrine", il faut utiliser un type "ArrayCollection". Il faut déclarer ce type de la même façon que pour
+la contrainte d'unicité, en ajoutant la ligne en début de fichier:
+
+		use Doctrine\Common\Collections\ArrayCollection;
+		
+Ensuite il faut déclarer la propriété, en ajoutant la ligne suivante à la fin des déclarations des propriétés ($private ....)
+		private $personnages;
+		
+Comme il ne s'agit pas d'un type "php" par défaut (il s'agit d'un objet "Doctrine"), il faut indiquer comment le créer.
+Cela se passe dans la "__construct" (le constructeur de la classe, qui n'existe pas par défaut). On définit donc le 
+constructeur de la classe pour créer notre objet:
+		public function __construct() {
+			$this->personnages = new ArrayCollection();
+		}
+
+Pour finir, en utilisant les annotations "doctrine", il faut définir comment accéder aux "personnages".
+Les annotations "doctrine" sont toutes insérées juste avant l'objet auquel elles se rapportent (cela
+peut être la classe comme pour la contrainte d'unicité ou juste avant la propriété quand il s'agit 
+d'annotations relatives à ce champ, comme pour les relations entre objets).
+Le formalisme des annotations est important pour qu'elles reconnues par le moteur "symfony". Il faut
+qu'elles soient définies à l'intérieur de commentaires commençant par "/**" et finissant par "**/".
+Si on oublie une "*", elles seront ignorées. 
+Pour "doctrine", les annotations commencent par "@ORM" par convention (en relation avec la déclaration 
+en début de fichier "use Doctrine\ORM\Mapping as ORM;"
+
+Dans notre en cas, l'étude à montrer qu'une maison peut avoir plusieurs personnages et qu'un personnage 
+ne peut appartenir qu'à une seule maison. Au sens "doctrine", il s'agit d'une relation "OneToMany" (Un Vers Plusieurs).
+Notre annotation pour la propriété "personnages" est:
+
+    /**
+     * @ORM\OneToMany(targetEntity="Personnage", mappedBy="maison")
+     **/
+    private $personnages;
+
+Ici on définit une relation "OneToMany", en lien avec l'entité "Personnage", le lien se faisant par la propriété "maison" 
+de l'entité "Personnage".
+
+Comme nous avons ajouter une propriété, que cette propriété est comme toutes les autres de type "private", donc inaccessible
+en dehors de la classe, il faut créer les méthodes permettant d'y accéder. 
+Ces méthodes sont nécessaires au mécanisme interne du moteur "symfony". On peut bien sûr les écrire à la main mais il existe
+une commande permettant de le faire (lorsque ces méthodes sont "basiques" et ne nécessitent pas de traitement particulier
+comme des calculs par exemple). La commande est la suivante:
+	php app/console doctrine:generate:entities AppBundle/Entity/Maison
+	
+Pour l'objet "Competences", on procède de la même façon: on ne supprime pas une compétence si au moins un personnage
+la possède. Et on ne crée pas deux compétences portant le même nom (unicité).
+Pour l'unicité la déclaration est similaire à la précédente.
+
+Pour les personnages ayant la compétence, on ajoute de la même façon une propriété "personnages", de même type (ArrayCollection,
+même déclaration, même fonction "__construct").
+
+Par contre ici, l'annotation change car un "personnage" peut avoir plusieurs compétences et une compétence peut être
+associée à plusieurs personnages. Pour "doctrine", c'est une relation "ManyToMany" (Plusieurs Vers Plusieurs).
+La déclaration de la propriété est donc:
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Personnage", mappedBy="competences")
+     **/
+
+    private $personnages;
+
+Pour l'entité "Personnage", on ajoute la contrainte d'unicité sur le nom (on ne crée pas deux personnages ayant le
+même nom). Il faut ensuite définir les relations pour les  propriétés "maison", "experience" et "competences".
+
+	Pour "maison" et "experience", plusieurs personnages peuvent être reliés à chacune d'elles mais un personnage
+	n'a qu'une maison et une expérience.
+	Il s'agit donc de relation "ManyToOne" (plusieurs vers un).
+	
+	Les annotations respectives sont (comme on avait créé les champs d'un type par défaut, il faut supprimer les
+	annotations existantes et les remplacer):
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Experience")
+     * @ORM\JoinColumn(name="experience_id", referencedColumnName="id")
+     **/
+
+    private $experience;
+	
+Ci-dessus, on indique que l'entité en relation est "Experience" et qu'on fait la liaison entre les deux par la propriété
+"experience_id" de l'entité "Personnage" et "id" de l'entité "Experience".
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Maison", inversedBy="personnages")
+     * @ORM\JoinColumn(name="maison_id", referencedColumnName="id")
+     **/
+
+    private $maison;
+	
+De la même façon, on déclare "Maison" comme entité référencée, avec "maison_id" et "id" comme champs de liaison.
+On a ajouté la déclaration "inversedBy="personnages" sur la première ligne pour indiquer à "doctrine" de renseigner
+automatiquement la propriété "personnages" de "Maison" avec le tableau des personnages appartenant à la maison.
+
+Pour la propriété "competences", plusieurs "Personnages" peuvent avoir la même compétence et un personnage peut
+avoir plusieurs "compétences". Il s'agit d'une relation "ManyToMany". Et comme on veut avoir un schéma de base
+de données en 3ème forme normale, on utilise une table de jointure. La déclaration est alors:
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Competences", inversedBy="Personnage")
+     * @ORM\JoinTable(name="Personnages_Competences")
+     **/
+
+    private $competences;
+	
+Ici, on spécifie que les entités en relation sont "Competences" et "Personnage" et qu'on veut 
+utiliser une table de jointure appelée "Personnages_Competences". 
+
+Ici, nous en avons terminé avec les déclarations nécessaires aux accès à la base de données.
+Même si on pourrait le faire plus tard, on va tout de suite définir une contrainte supplémentaire sur les personnages.
+Comme il existe des contraintes prédéfnies comme la contrainte d'unicité que nous avons utilisée, il est possible de
+définir des contraintes personnalisées. Or nous en avons une: le nombre de compétences que peut avoir un personnage
+dépend de son expérience. En divisant son "exprience" par 30, on obtient le nombre maximum de compétences qu'il peut avoir.
+Exemple, s'il est "Adolescent", il a une "experience" de 150 points. 150 divisé par 30 donne 5. Il ne peut avoir que 5
+compétences maximum.
+Pour définir une contrainte personnalisée, on a besoin de deux nouvelles déclarations:
+		use Symfony\Component\Validator\Constraints as Assert;
+		use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
+Ce sont comme leur chemin l'indique des "validator". Les validatateurs (en français) sont des composants qui s'intercalent
+dans le processus "symfony" entre l'application et la couche base de données. Avant chaque enregistrement dans la base de 
+données, les validateurs définis sont exécutés systématiquement. L'enregistrement ne se fait que si aucune erreur n'est retournée.
+Un certain nombre de validateurs sont prédéfinies comme par exemple une limite de nombre de caractères, ou une plage de valeurs
+autorisées sur un champ numérique, etc. Ici il faut définir notre propre validateur. Comme il s'agit d'un validateur sur la
+propriété "competences", on doit l'appeler "isCompetencesValid". Elle sera alors exécutée à chaque fois que la propriété
+"competences" est modifiée et doit être vérifiée.
+Sa définition est la suivante:
+
+    private $bErr = false;	// propriété non mappée dans la base de données
+							// mais permettant de ne remonter qu'une seule fois l'erreur
+							// sans ça, une erreur est remontée pour chaque "competence" dépassant le seuil limite.
+    /**
+     * @Assert\Callback()
+     **/
+    public function isCompetencesValid(ExecutionContextInterface $context)
+    {
+        if ( $this->competences->count()  > $this->experience->getExperience() / 30 )
+        {
+            if ( ! $this->bErr )
+            {
+                $context ->buildViolation( "Le personnage ne peut avoir que %competencesmax% competences au lieu %nbcompetences% actuellement" )
+                     ->setParameters( array ( '%competencesmax%' => $this->experience->getExperience() / 30,
+                                              '%nbcompetences%' => $this->competences->count())) // message
+                     ->atPath('competences') // attribut de l'objet qui est violé
+                     ->addViolation();
+                $this->bErr=true;
+            }
+        }
+    }
+
+L'annotation "@assert\Callback()" définit une fonction de contrainte personnalisée.
+Ensuite, on teste le nombre de compétences à la division de l'expérience par 30. Si c'est le cas, on lève une erreur.
+
+Nous en avons fini avec les entités au sens "symfony". Il reste maintenant à créer les tables dans la base de données.
+Pour ça, on utilise la commande suivante: 
+
+	php app/console doctrine:schema:update --force
+	
+Cette commande analyse toutes les entités du projet et toutes les annotaitions "doctrine" qu'on a ajouté pour créer la base.
+
+Une fois la commande exécutée, il faut vérifier avec "phpmyadmin" si toutes les tables ont été créées correctement.
+
+3.2 Génération et développement des "bundles" métiers.
+Comme vu précédemment, "symfony" n'est qu'une suite de bundles qu'on ajoute à notre application. Ici nous avons défini nos entités,
+mais nous n'en avons encore rien fait. Chaque traitement (affichage, écran de création, modification) doit maintenant être développé.
+
+Nous avons prévu un écran d'affichage de chaque des entités (pour vérifier plus facilement ce qu'il y a dans la base).
+Nous allons donc créer 4 bundles, un pour chaque entité. Et comme il y aura un champ de recherche, on va créer un bundle 
+supplémentaire se chargeant de la recherche.
+Les 5 bundles à créer se nommeront (les noms doivent se terminer par "Bundle"):
+	CompetencesBundle
+	ExperienceBundle
+	MaisonBundle
+	PersonnageBundle
+	SearchBundle
+	
+Les 4 premiers se chargeant de la gestion de l'entité à laquelle son nom fait référence et le dernier gérant la recherche.
+Pour créer le squelette des bundles, il existe la commande:
+		php app/console generate:bundle
+On crée un "bundle" dans un "namespace" (espace de nom"). C'est une sous-couche de l'application. Cela permet de regrouper
+des fonctionnalités identiques dans un même espace de travail. 
+Ici nous utiliserons un seul namespace "Omg". C'est en fait un sous-répertoire de l'application.
+Le format utilisé par la configuration sera "yml".
+On utilise toutes les options par défaut pour les autres paramètres de la génération.
+
+On peut vérifier dans le répertoire "src" que le répertoire "Omg" a bien été créé (notre namespace). Sous ce répertoire, il doit y avoir 5 répertoires
+correspondant à chacun de nos bundles.
+
+3.2.1 Bundle "Experience"
+Nous commençons par le bundle Experience car c'est le plus simple. En effet, ce bundle ne permet que d'afficher les expériences disponibles dans la base.
+On ne peut pas créer, modifier ou supprimer une "Experience".
+
+3.2.1.1 Le routing
+La logique d'accès et d'enchaînement des écrans et des traitements "symfony" utilise la notion de "routing" (route).
+Les routes sont en fait des urls particulières de notre application web. A ces urls (ou routes) on associe un traitement.
+
+La configutation du routing de l'application se fait dans le fichier: "app/config/routing.yml".
+
+En regardant dans ce fichier, on peut voir que le générateur de bundle a ajouté des lignes pour chacun de nos 5 bundles:
+	omg_search:
+	    resource: "@OmgSearchBundle/Resources/config/routing.yml"
+	    prefix:   /
+
+	omg_competences:
+	    resource: "@OmgCompetencesBundle/Resources/config/routing.yml"
+	    prefix:   /
+
+	omg_experience:
+	    resource: "@OmgExperienceBundle/Resources/config/routing.yml"
+	    prefix:   /
+
+	omg_personnage:
+	    resource: "@OmgPersonnageBundle/Resources/config/routing.yml"
+	    prefix:   /
+
+	omg_maison:
+	    resource: "@OmgMaisonBundle/Resources/config/routing.yml"
+	    prefix:   /
+
+En fait, chacune des notations "@OmgXXXBundle/Resources/config/routing.yml" permet d'inclure le fichier du bundle correspondant.
+Cela permet de définir les routes concernant un bundle particulier dans son arborescence propre. La portabilité et la
+réutilisabilité de nos bundles s'en trouvent améliorée.
+
+Donc pour notre bundle "Experience", le routing est paramétré dans le fichier "src/Omg/Experience/Resources/config/routing.yml", fichier qui est inclus dans
+le fichier de routes principal ("app/config/routing.yml").
+
+On va paramétrer la route dont on a besoin. Pour le moment le fichier contient les lignes suivantes:
+		omg_experience_homepage:
+		    path:     /hello/{name}
+		    defaults: { _controller: OmgExperienceBundle:Default:index }
+
+On change tout de suite les lignes par:
+		omg_experience_homepage:
+		    path:     /Experiences
+		    defaults: { _controller: OmgExperienceBundle:Experiences:index }
+
+Remarque: ne pas utiliser de tabulations dans les fichiers "routing.yml", cela provoque une erreur dans "Symfony".
+
+La premier ligne "omg_experience_homepage" est un identifiant de la route. Cela permettra de pouvoir accéder à  sa définition
+dans les autres composants de l'application (template, controlleur, etc.).
+La deuxième ligne "path" définit l'url de notre fonction, ici "/Experiences".
+En supposant qu'on accède à notre site par l'url "http://www.omg.com" (page d'accueil de notre site), la route "/Experiences" correspond
+à l'url "http://www.omg.com/Experiences". En utilisant cette url, "symfony" sait qu'elle doit être traitée et redirigée vers un traitement de notre bundle.
+
+La troisième ligne définit le controller (controleur) de notre action. C'est la partie du "programme" qui sera exécutée en réponse à notre
+url.
+La syntaxe du controller est: NamespaceNomDuBundle:NomduControlleur:ActionDuController.
+Ici on a: OmgExperienceBundle:Experiences:index
+Ce qui signifie: bundle Omg/ExperienceBundle, controller Experiences, méthode "index".
+Tous les controleurs sont suffixés par "Controller" et se trouvent dans les répertoires "Controller" des bundles. 
+Les actions paramétrées dans les routes correspondent à des méthodes de notre controlleur suffixées par "Action". 
+Ainsi notre action "index" correspond à la méthode indexAction() de notre controlleur.
+
+Pour résumé, le traitement de notre route se fera dans le fichier "src/Omg/ExperienceBundle/Controller/ExperiencesController.php" 
+par la méthode "indexAction()" définit dans ce fichier.
+
+3.2.1.2 Controller
+Pour le moment, ce fichier n'existe pas. En regardant dans le répertoire "src/Omg/ExperienceBundle/Controller", on voit qu'il y a un fichier
+"DefaultController.php". Pour ne pas repartir de rien, on peut copier ce fichier sur le fichier "ExperiencesController.php".
+
+La première chose à faire est de renommer la classe en changeant la ligne
+	class DefaultController extends Controller
+par
+	class ExperiencesController extends Controller
+	
+Ensuite, on voit que la méthode gérant l'action "index" (indexAction()) est déjà créée. Mais elle admet un paramètre. Comme
+notre action n'a pas de paramètre (elle liste toutes les expériences), on supprime le paramètre dans la définition de la méthode:
+    public function indexAction()
+
+Pour afficher la liste de toutes les expériences, il faut tout d'abord aller les rechercher en base de données.
+Pour cela, on va utiliser "doctrine" car définit quelques fonctions de base d'accès aux données.
+Ici, on veut tous les enregistrements de notre entité  "Experience" (correspondant à la table "Experience" de mysql).
+On pourrait écrire et soumettre une requête du type "select * from Experience" mais autant utiliser les fonctions
+tout prêtes de "doctrine", en l'occurrence, on utilise la méthode:
+
+	$list_experiences=$this->getDoctrine()
+			->getRepository('AppBundle:Experience')
+			->findAll();
+			
+Cette ligne appelle le "moteur" "doctrine", lui indique qu'on veut travailler avec l'enttité "AppBundle:Experience" (qu'on a
+défini plus haut) et qu'on veut tous les enregsitrements (findall() ). On a récupéré toutes les "experiences" de la base de 
+données.
+
+On va maintenant les afficher. Pour cela, comme nous avons décidé d'utiliser les "templates" et le bunlde "twig", nous utilisons la
+fonction 
+	return $this->render('OmgExperienceBundle:Experiences:index.html.twig', array('experiences' => $list_experiences));
+	
+On indique à "symfony" qu'on veut générer (render) le template "OmgExperienceBundle:Experiences:index.html.twig" en lui
+passant un paramètre "experiences" dont la valeur est notre liste (tableau en fait) d'experiences.
+
+Le format de spécification du template reprend le même principe que la définition du controlleur dans les fichiers "routing.yml".
+Les templates se trouvent toujours dans le répertoire "Resources/views" des bundles.
+Ici le bundle est "OmgExperienceBundle", les templates se trouvent donc dans:
+src/Omg/ExperienceBunlde/Resources/views
+Le second champ correspond à un sous-répertoire du répertoire "views", ici on a mis "Experiences".
+Enfin le dernier champ est le nom du fichier de template, ici "index.html.twig". Pour qu'il soit utilisable par "twig" (le moteur de gestion
+de templates), il faut laisser l'extension "html.twig". On final, notre fichier template est:
+src/Omg/ExperienceBunlde/Resources/views/Experiences/index.html.twig
+
+Le but du controlleur est d'exécuter les traitements associés à la requête du navigateur et de retourner la page html.
+La génération du html en utilisant le tempalte se faisant par la méthode 'render', on n'a plus qu'à retourner le résultat
+de cette méthode (return).
+Notre controlleur est terminé.
+
+3.2.1.3. Le template.
+Pour le template, on peut encore une fois utiliser plusieurs méthodes: 
+	soit chaque bundle possède son propre template (on redéfinit le template dans tous les bundles)
+	soit on utilise la notion "d'héritage". On définit alors un template général à l'application et on ne
+	modifie que la partie spécifique à chaque bundle au niveau des templates "bundle".
+	
+C'est cette dernière solution qu'on va utiliser, cela permet d'avoir plus facilement une cohérence visuelle sur
+toutes nos pages et surtout quand on modifie une partie du template, on ne le modifie qu'à un endroit.
+
+Le template général de l'application se trouve est:
+app/Resources/views/base.html.twig
+
+Pour ne pas se perdre dans le design de l'application tout de suite (on a décidé de le faire à la fin seulement), on
+va définir ce template général de façon très simple pour le moment:
+
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<meta charset="UTF-8" />
+			<title>OMG - Game Of Thrones Characters</title>
+			<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+		</head>
+		<body>
+			<h1>OMG Project - Game of Thrones Characters</h1>
+			{% block body %}<div>Bienvenue dans mon projet OMG</div>{% endblock %}
+
+			{% block javascripts %}{% endblock %}
+		</body>
+	</html>
+
+Dans ce template minimaliste on peut s'apercevoir qu'en plus des tags habituels "html", il y a des tags commençant par "{%" et se terminant par "%}".
+En fait, ces tags sont les tags interprêtés par "twig". Ce sont les parties variables du template qui pourront être remplacées par les templates qui hériteront
+de ce template principal.
+
+Dans le template de notre bundle "Experience" (src/Omg/ExperienceBunlde/Resources/views/Experiences/index.html.twig), pour cette première étape, 
+on définit là-aussi un template minimaliste, juste pour vérifier le fonctionnement général sans s'occuper du design, voilà ce que ça donne:
+
+	{% extends '::base.html.twig' %} 
+
+	{% block body %} 
+
+	<h1>Liste des expériences disponibles</h1>
+
+		{% for experience in experiences %}
+		<p>{{ experience.age }} - {{ experience.experience }}</p>
+		{% else %}
+			<p>Aucune expérience trouvée</p>
+		{% endfor %}
+	{% endblock %}
+
+Ici on s'aperçoit qu'il n'y a pas beaucoup de tag html et qu'il y a beaucoup plus de tag "twig".
+
+La permière ligne (extends) indique à "twig" que le template hérite de notre template de base.
+La ligne suivante ({% block body %}) permet de définir un bloc html nommé "body" qui, s'il est défini dans le template de base, remplace la partie 
+correspondante.
+La fin du bloc est défini par le tag ({% endblock %})
+La ligne suivante est du html pur (<h1>...</h1>) et permet de définir un titre de niveau 1. 
+La suivante est un tag "twig": {% for experience in experiences %}
+Elle permet de parcourir un tableau passé en paramètre. Or lors de l'appel au "render", on avait passé le tableau "list_experiences" (contenant
+toutes nos experiences) dans une variable nommée "experiences".
+cela fonctionne comme en php lorsqu'on veut parcourir un tableau.
+La fin de notre "for" est déterminée par le tag "{% endfor %}"
+
+Après notre ligne, on insère un ligne html "<p>" (paragraphe) dans laquelle on affiche deux variables "twig" (les variables "twig" sont encadrées 
+par les séquences de caractères "{{" et "}}".
+Lorsque les varaibles sont des objets (comme ici, "experience" est notre entité "Experience" "symfony", qui est un objet), on accède à ses
+propriétés à l'aide du ".". Les propriétés sont celles de notre objet "symfony".
+Ici on affiche les propriétés "age" et "experience" de notre objet, séparées par " - ".
+Les deux lignes suivantes sont utilisées lorsque notre tableau est vide ({% else %}). On affiche alors: Aucune expérience trouvée.
+
+Le template de notre bundle est terminé.
+
+La première partie de notre application est prête à fonctionner.
+
+3.2.1.4. Test de l'application
+
+Lors de la phase de développement, "symfony" a une fonctionnalité permettant de lancer notre application sur un serveur "web" dédié.
+Cela évite d'avoir à configurer un serveur "apache" tout de suite. Nous le ferons lors de la phase de mise en production.
+Il y a plusieurs environnement dans "symfony". Par défaut, il y en a deux: dev et prod.
+Par défaut, c'est "dev" qui est utilisé. Il est très pratique lors de la phase de conception car en cas d'erreur, "symfony" essaie
+de déterminer l'erreur qu'on a pu faire et affiche le plus souvent les informations nécessaires pour la corriger.
+
+Le lancement de ce serveur de test se fait par la commande:
+	php app/console server:run
+	
+Il lance le serveur sur l'interface "localhost" et le port "8000". On y accède alors par l'url "http://localhost:8000".
+
+Remarque: 
+	si on veut tester notre application depuis un poste client, il faut lancer le serveur sur l'interface "internet". Pour ça, il faut 
+	ajouter le n° ip de notre serveur à la commande:
+		php app/console server:run 192.168.1.35:8000  (ou 192.168.1.35 est notre ip).
+	Attention à ne pas oublier le ":8000" pour ne pas lancer le serveur sur le port par défaut (80) utilisé le plus souvent par "apache".
+	Il y aurait un conflit et le serveur ne se lancerait pas.
+	
+Une fois lancé, le serveur affiche:
+		$ php app/console server:run
+		Server running on http://127.0.0.1:8000
+
+		Quit the server with CONTROL-C.
+
+Nous avions paramétré notre route pour accéder à la liste des expériences par l'url "/Experiences".
+
+Pour tester notre bundle "ExperienceBunlde", depuis notre serveur, il faut lancer un navigateur et utiliser l'url:
+http://localhost:8000/Experiences
+
+Dans un premier temps, notre application indiquera "aucune expérience trouvée".
+
+En utilisant "phpmyadmin", on peut insérer les expériences de notre cahier des charges et refaire la requête. Les expériences s'affichent.
+
+3.2.2 Bundle "Competences".
+	Notre bundle "Competences" et les suivants seront plus complets pour permettre d'effectuer les mises à jour habituelles: créer, modifier et supprimer
+	une entité.
+	
+	Pour la liste des compétences, on reprend le même principe que pour la liste des expériences. 
+	On ajoutera simplement un lien "Créer une compétence" en bas de la page. On verra plus tard on le paramètre.
+	
+	Le principe utilisé dans toute l'application est le même:
+		- On accède à la création depuis la liste des entités
+		- On accède au détail d'une entité depuis la liste des entités.
+		- On accède à la modification/suppression depuis le détail d'une entité.
+	
+3.2.2.1 Détail d'une compétence
+	Pour accéder au détail d'une compétence, il nous faut un paramètre supplémentaire indiquant quelle compétence on veut afficher.
+	Avec "symfony", le plus simple est d'utiliser l'identifiant de la ressource à afficher (notre champ "id" ajouté automatiquement par "doctrine").
+	
+	Il faut pour ça paramétrer notre route pour qu'elle tienne compte du paramètre supplémentaire et surtout l'identifie. "Symfony" utilise une
+	sorte d'expression régulière simplifiée. Notre déclaration de route pour l'affichage est:
+	
+		omg_competences_homepage:
+			path:     /Competences
+			defaults: { _controller: OmgCompetencesBundle:Competences:index }
+
+		omg_competence_show:
+			path:     /Competence/{id}
+			defaults: { _controller: OmgCompetencesBundle:Competences:show }
+			requirements: { "id": "\d+" }
+
+On a déjà déclaré la route "omg_competences_homepage" pour la liste des compétences, on a ensuite ajouté la route "omg_competence_show":
+Le path est "/Competence/{id}". Cela indique à "symfony" que l'url pour afficher le détail est "/Competence/" suivi d'un paramètre défini par la
+notation "{param}" (ici {id}). La valeur de ce paramètre sera passé à la méthode du controleur 
+(ici "src/Omg/CompetencesBundle/Controller/CompetencesController.php", méthode "showAction").
+On a ajouté une option "requirements" indiquant à "symfony" que notre paramètre "id" doit être numérique.
+
+Dans notre controleur, on ajoute alors la méthode "showAction":
+
+	public function showAction( Competences $competence )
+	{
+		return $this->render('OmgCompetencesBundle:Competences:show.html.twig', array('competence' => $competence ) );
+	}
+
+On peut voir que cette méthode accepte un paramètre "competence" alors qu'on a déclaré un paramètre "id" dans la route.
+Mais comme on a utilisé le champ par défaut "id", que nous sommes dans le bundle "CompetenceBundle" et qu'il existe une
+entité "Competence", "symfony" a un automatisme interne qui recherche automatiquement l'objet "competence" par son "id"
+dès qu'une route est paramétrée avec. On aurait pu aussi déclarer le paramètre "id" et utiliser "doctrine" pour accéder à
+l'entité mais autant utliser toutes les fonctions de "symfony".
+Pour  pouvoir utiliser l'entité "Competences", il faut déclarer où trouver sa défintion en ajoutant la ligne en début de fichier:
+
+use AppBundle\Entity\Competences;
+
+On se retrouve avec notre entité compétence, il n'y a plus qu'à générer le html et le retourner au navigateur. On utilise
+un autre template: src/Omg/CompetenceBundle/Resources/view/Competences/show.html.twig
+
+Pour le moment on fait un template minimaliste aussi:
+
+	{% extends '::base.html.twig' %} 
+
+	{% block body %} 
+		<h1>
+			Détail d'une compétence
+		</h1>
+		<p>
+				Compétence {{ competence.nom }}
+		</p>
+		<p>
+				Description {{ competence.description }}
+		</p>
+		<p>
+				<a href="{{ path('omg_competence_homepage') }}" alt="Retour">Retour</a>
+		</p>
+
+	{% endblock %}
+
+On a ajouté une nouvelle variable "{{ path('omg_competence_homepage') }}". Cette variable indique à "twig" de générer 
+l'url de la route "omg_competence_homepage". "twig" va alors chercher dans sa configuration de route la route dont
+l'identifiant est "omg_competence_homepage". Ici on se retrouvera pas exemple avec: "http://localhost:8000/Competences".
+

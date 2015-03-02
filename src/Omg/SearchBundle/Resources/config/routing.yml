@@ -1,0 +1,3 @@
+omg_search_search:
+    path:     /search
+    defaults: { _controller: OmgSearchBundle:Search:search }

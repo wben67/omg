@@ -1,0 +1,22 @@
+omg_maison_homepage:
+    path:    /Maisons
+    defaults: { _controller: OmgMaisonBundle:Maison:index }
+
+omg_maison_add:
+    path:    /Maisons/add
+    defaults: { _controller: OmgMaisonBundle:Maison:add }
+
+omg_maison_upd:
+    path:    /Maison/{id}/upd
+    defaults: { _controller: OmgMaisonBundle:Maison:upd }
+    requirements: { "id": "\d+" }
+
+omg_maison_del:
+    path:    /Maison/{id}/del
+    defaults: { _controller: OmgMaisonBundle:Maison:del }
+    requirements: { "id": "\d+" }
+
+omg_maison_show:
+    path:     /Maison/{id}
+    defaults: { _controller: OmgMaisonBundle:Maison:show }
+    requirements: { "id": "\d+" }

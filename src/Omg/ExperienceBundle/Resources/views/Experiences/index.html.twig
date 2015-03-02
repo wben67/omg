@@ -1,0 +1,32 @@
+{% extends '::base.html.twig' %} 
+
+        {% block stylesheets %}
+            <link href="{{ asset('bundles/app/css/main.css') }}" type="text/css" rel="stylesheet" />
+            <link href="{{ asset('bundles/omgexperience/css/exp.css') }}" type="text/css" rel="stylesheet" />
+        {% endblock %}
+{% block title %}Expériences - Liste{% endblock %}
+
+
+{% block body %} 
+
+<h1>Liste des expériences disponibles</h1>
+
+<table>
+	<tbody>
+    <tr>
+        <th>Age</th><th>Pts Experiences</th>
+    </tr>
+
+    {% for experience in experiences %}
+    <tr>
+        <td>{{ experience.age|e }}</td><td>{{ experience.experience }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="2">Aucune expérience trouvée</td>
+    </tr>
+    {% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends '::base.html.twig' %} 
+
+{% block title %}Compétences - Liste{% endblock %}
+
+{% block body %} 
+
+<h1>Liste des compétences</h1>
+
+<table>
+	<thead>
+	    <tr>
+	        <th>Nom</th><th>Description</th>
+	    </tr>
+	</thead>
+
+	<tfoot>
+		<tr>
+			<td colspan="2">
+				<a href="{{ path('omg_competence_add' ) }}" alt="Créer">Créer une compétence</a>
+			</td>
+		</tr>
+	</tfoot>
+
+	<tbody>
+    {% for competence in competences %}
+    <tr>
+        <td><a href="{{ path('omg_competence_show',  { 'id': competence.id }) }}">{{ competence.nom|e }}</a></td><td>{{ competence.description }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="2">Aucune competence trouvée</td>
+    </tr>
+    {% endfor %}
+	</tbody>
+</table>
+
+
+{% endblock %}

@@ -1,0 +1,12 @@
+.MainBody table tbody tr:last-child td:first-child {
+    border-style: solid;
+    border-width: 0px;
+    border-bottom-left-radius: 12px;
+}
+
+.MainBody table tbody tr:last-child td:last-child {
+    border-style: solid;
+    border-width: 0px;
+    border-bottom-right-radius: 12px;
+}
+

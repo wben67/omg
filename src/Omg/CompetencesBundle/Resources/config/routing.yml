@@ -1,0 +1,22 @@
+omg_competences_homepage:
+    path:     /Competences
+    defaults: { _controller: OmgCompetencesBundle:Competences:index }
+
+omg_competence_del:
+    path:    /Competence/{id}/del
+    defaults: { _controller: OmgCompetencesBundle:Competences:del }
+    requirements: { "id": "\d+" }
+
+omg_competence_add:
+    path:    /Competences/add
+    defaults: { _controller: OmgCompetencesBundle:Competences:add }
+    
+omg_competence_upd:
+    path:    /Competence/{id}/upd
+    defaults: { _controller: OmgCompetencesBundle:Competences:upd }
+    requirements: { "id": "\d+" }
+
+omg_competence_show:
+    path:     /Competence/{id}
+    defaults: { _controller: OmgCompetencesBundle:Competences:show }
+    requirements: { "id": "\d+" }

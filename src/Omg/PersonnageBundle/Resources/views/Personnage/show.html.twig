@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %} 
+
+{% block title %}Personnages - Détail{% endblock %}
+
+{% block body %} 
+<div class="showentity" id="personnage">
+	<div class="title">
+		Détail d'un personnage
+	</div>
+	<div class="showbody">
+		<div id="nom">
+			Personnage <span class="field">{{ personnage.nom }}</span>
+		</div>
+		<div id="description">
+			Description <span class="field">{{ personnage.description }}</span>
+		</div>
+		<div id="maison">
+			Maison <span class="field">{{ personnage.maison.nom }}</span>
+		</div>
+		<div id="experience">
+			Expérience <span class="field">{{ personnage.experience.age }}</span>
+		</div>
+		<div id="competence">
+			Compétences 
+			{% for competence in personnage.competences %}
+			<span class="field">{{ competence.nom }}</span> -
+			{% else %}
+				Aucune compétence
+			{% endfor %}
+		</div>
+	</div>
+	<div class="action">
+		<div id="modifier"><a href="{{ path('omg_personnage_upd', { 'id' : personnage.id } ) }}" alt="Modifier le personnage">Modifier</a></div>
+		<div id="supprimer"><a href="{{ path('omg_personnage_del', { 'id' : personnage.id } ) }}" alt="Supprimer le personnage">Supprimer</a></div>
+		<div id="retour"><a href="{{ path('omg_personnage_homepage') }}" alt="Retour">Retour</a></div>
+	</div>
+</div>
+
+{% endblock %}

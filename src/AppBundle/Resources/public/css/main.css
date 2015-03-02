@@ -1,0 +1,432 @@
+body {
+	/*background-image: url(../images/game-of-thrones-wallpaper-4.jpg);*/
+	background-image: url(../images/King-s-Landing-concept-art-game-of-thrones-21954054-2048-1369.jpg);
+	background-position: center center;
+	font-weight: bold;
+	font-family: Cursive;
+}S/
+
+h1 {
+	color: red;
+}
+
+div.MainTitle {
+	/*width: 100%;*/
+	margin-left: 50px;
+	margin-right: 50px;
+	height: 50px;
+}
+
+div.MainTitle h1 {
+	background-image: url(../images/title.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 644px;
+	height: 37px;
+	margin: auto;
+	margin-top: 20px;
+	opacity: 0.7;
+	border-style: solid;
+	border-width: 0;
+	border-radius: 7px;
+}
+
+div.Menus {
+	height: 32px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-left: 50px;
+	margin-right: 50px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	border-style: solid;
+	border-width: 0;
+	border-radius: 7px;
+	background-color: white;
+	opacity: 0.75;
+}
+
+div.Menus div.MainMenu {
+	padding: 0px;
+	margin: 0px;
+	vertical-align: middle;
+}
+
+div.Menus div.MainMenu ul {
+	margin:auto;
+	float: left;
+	padding: 0px;
+}
+
+div.Menus div.MainMenu li {
+	margin-right: 5px;
+	padding: 6px;;
+	border-style: solid;
+	border-width: 0;
+	border-radius: 5px;
+	background-color: #000000;
+	opacity: 0.8;
+	list-style-type: none;
+	float: left;
+	min-width: 80px;
+	text-align: center;
+}
+
+div.Menus div.SearchMenu {
+	margin: auto;
+	float: right;
+	border-style: solid;
+	border-width: 0;
+	border-radius: 6px;
+	background-color: #000000;
+	opacity: 0.8;
+	padding: 4px;
+	color: #EEEEEE;
+}
+
+input[type="text"] , input[type="checkbox"], button, textarea, select {
+	border-radius: 5px;
+}
+
+.SearchMenu input[type="checkbox"] {
+	margin-left: 0px;
+	margin-right: 6px;
+}
+
+.SearchMenu label {
+	margin-right: -1px;
+}
+
+div.Menus a {
+	font-size: 1em;
+	color: white;
+	font-weight: bold;
+	font-family: Cursive;
+	text-decoration: none;
+}
+
+div.Menus :visited {
+	color: #EEEEEE;
+}
+
+div.FlashMessage {
+	background-color: red;
+	opacity: 0.8;
+	color: yellow;
+	font-size: 1.5em;
+	margin-left: 50px;
+	margin-right: 50px;
+	border-style: solid;
+	border-width: 0;
+	border-radius: 5px;
+}
+
+div.FlashMessage p {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+div.MainBody {
+	min-height: 600px;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-left: 50px;
+	margin-right: 50px;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	border-style: solid;
+	border-width: 0;
+	border-radius: 7px;
+	background-color: white;
+	opacity: 0.75;
+	font-family: "Marked Fool",Junkyard,Balker,Papyrus,Haettenschweiler,Impact,fantasy;
+}
+
+.MainBody h1 {
+	min-width: 300px;
+	/*width: 90%;*/
+	margin: auto;
+	margin-top: 20px;
+	margin-bottom: 30px;
+	opacity: 0.75;
+	background-color: yellow;
+	font-weight: bold;
+	font-size: 3.5em;
+	text-align: center;
+	border-style: solid;
+	border-width: 2px;
+	border-color: yellow;
+	border-radius: 12px;
+	color: rgb( 74, 0, 0 );
+}
+
+.MainBody table {
+	margin-right: auto;
+	margin-left: auto;
+	font-size: 1.5em;
+	/*width: 75%;*/
+	min-width: 300px;
+}
+
+.MainBody table tbody, .MainBody table thead {
+	border-style: solid;
+	border-width: 0px;
+	border-radius: 12px;
+	background-color: cyan;
+}
+
+.MainBody table th {
+	font-size: 1.25em;
+}
+
+.MainBody table th:first-child {
+	border-style: solid;
+	border-width: 0px;
+	border-top-left-radius: 12px;
+}
+
+.MainBody table th:last-child {
+	border-style: solid;
+	border-width: 0px;
+	border-top-right-radius: 12px;
+}
+
+.MainBody table tbody tr:last-child td:first-child {
+	border-style: solid;
+	border-width: 0px;
+	border-bottom-left-radius: 12px;
+}
+
+.MainBody table tbody tr:last-child td:last-child {
+	border-style: solid;
+	border-width: 0px;
+	border-bottom-right-radius: 12px;
+}
+
+.MainBody table td {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.MainBody table tfoot td {
+	text-align: center;
+}
+
+.MainBody table tfoot td a {
+	background-color: grey;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 12px;
+	padding-right: 12px;
+	border-style: solid;
+	border-width: 0px;
+	border-radius: 8px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.MainBody table tfoot td a:hover {
+	background-color: black;
+	color: white;
+}
+.MainBody table td:first-child {
+	width: 20%;
+}
+
+.MainBody :link , .MainBody :visited {
+	text-decoration: none;
+}
+
+.MainBody div.showentity, .MainBody div.addupdentity, {
+	margin-right: auto;
+	margin-left: auto;
+	font-size: 1.2em;
+	width: 75%;
+	min-width: 300px;
+	padding: 30px;
+	border-style: solid;
+	border-width: 0px;
+	border-radius: 12px;
+	background-color: cyan;
+}
+
+.showentity div.title , .showentity div.showbody , .showentity div.action,
+.results div.title, .results div.resultsbody,
+.addupdentity div.title , .addupdentity div.addupdbody , .addupdentity div.action {
+	margin-right: auto;
+	margin-left: auto;
+	font-size: 1.2em;
+	min-width: 300px;
+	padding: 10px;
+	border-style: solid;
+	border-width: 0px;
+	border-radius: 12px;
+	background-color: magenta;
+}
+
+.showentity div.title, .addupdentity div.title,
+.results div.title {
+	text-align: center;
+	font-size: 2.5em;
+	color: yellow;
+	font-weight: bold;
+}
+
+.results div.title,
+.showentity div.title , .showentity div.action, 
+.addupdentity div.title, .addupdentity div.action {
+	text-align: center;
+	margin-top: 10px;
+}
+
+.showentity div.action,
+.addupdentity div.action {
+	height: 28px;
+}
+
+.showentity div.showbody,
+.results div.resultsbody {
+	text-align: left;
+	margin-top: 10px;
+}
+
+.addupdentity div.addupdbody {
+	text-align: left;
+	margin-top: 10px;
+	padding-bottom: 70px;
+}
+
+.showentity .showbody span.field,
+.addupdentity .addupdbody span.field {
+	margin-left: 10px;
+	color: yellow;
+}
+
+.showentity .action div ,
+.addupdentity .action div {
+	width: 20%;
+	border-style: solid;
+	border-width: 0px;
+	border-radius: 12px;
+	background-color: grey;
+	padding: 3px;
+}
+
+.addupdentity form div button[type="submit"]:hover, 
+.showentity .action div:hover,
+.addupdentity .action div:hover {
+	background-color: black;
+}
+
+.addupdentity form div button[type="submit"]:hover, 
+.showentity .action div:hover a,
+.addupdentity .action div:hover a{
+	color: white;
+}
+
+.showentity .action div#modifier {
+	float: left;
+}
+
+.showentity .action div#supprimer {
+	margin-left: auto;
+	margin-right: auto;
+	display: inline-block;
+}
+
+.showentity .action div#retour {
+	float: right;
+}
+
+.addupdentity .addupdbody form div > div {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.addupdentity .action div#retour {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.addupdentity form div button[type="submit"] {
+	width: 20%;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	font-size: 1.2em;
+	border-radius: 8px;
+	float: right;
+	font-family: "Marked Fool",Junkyard,Balker,Papyrus,Haettenschweiler,Impact,fantasy;
+	background-color: grey;
+}
+
+.addupdentity form div label, 
+.addupdentity form div textarea,
+.addupdentity form div input[type="checkbox"] {
+	margin-right: 5px;
+	vertical-align: middle;
+}
+
+.addupdentity form div label {
+	width: 20%;
+}
+
+.addupdentity form div input[type="text"],
+.addupdentity form div textarea {
+	width: 50%;
+}
+
+.addupdentity form div select,
+.addupdentity form div input[type="text"],
+.addupdentity form div textarea {
+	font-family: "Marked Fool",Junkyard,Balker,Papyrus,Haettenschweiler,Impact,fantasy;
+	font-size: 1em;
+	min-width: 20%;
+}
+
+.addupdentity form div > div > label ~ div {
+	margin-left: 30px;
+}
+
+.addupdentity form div > div > label ~ div label {
+	margin-right: 1.25em;
+}
+
+.addupdentity form div > div > label ~ div input[type="checkbox"] {
+	margin-right: 1px;
+}
+
+.results .resultsbody .subtitle {
+	font-size: 1.2em;
+	margin-left: 40px;
+}
+
+.results .resultsbody div {
+	margin-top: 0px;
+}
+
+.results .resultsbody > div {
+	border-style: solid;
+	border-width: 0px;
+	border-radius: 12px;
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+	background-color: violet;
+	padding: 8px;
+}
+
+.results .resultsbody div p {
+	margin: 0px;
+	padding: 0px;
+}

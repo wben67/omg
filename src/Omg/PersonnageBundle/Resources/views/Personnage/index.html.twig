@@ -1,0 +1,36 @@
+{% extends '::base.html.twig' %} 
+
+{% block title %}Personnages - Liste{% endblock %}
+
+{% block body %} 
+
+<h1>Liste des personnages</h1>
+
+<table>
+	<thead>
+	    <tr>
+	        <th>Nom</th><th>Description</th>
+	    </tr>
+	</thead>
+	<tfoot>
+		<tr>
+			<td colspan="2">
+				<a href="{{ path('omg_personnage_add') }}" alt="Créer">Créer un personnage</a>
+			</td>
+		</tr>
+	</tfoot>
+
+	<tbody>
+    {% for personnage in personnages %}
+    <tr>
+        <td><a href="{{ path('omg_personnage_show', { 'id' : personnage.id }) }}">{{ personnage.nom|e }}</a></td><td>{{ personnage.description|e }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="2">Aucun personnage trouvé</td>
+    </tr>
+    {% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

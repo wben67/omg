@@ -1,0 +1,23 @@
+omg_search:
+    resource: "@OmgSearchBundle/Resources/config/routing.yml"
+    prefix:   /
+
+omg_competences:
+    resource: "@OmgCompetencesBundle/Resources/config/routing.yml"
+    prefix:   /
+
+omg_experience:
+    resource: "@OmgExperienceBundle/Resources/config/routing.yml"
+    prefix:   /
+
+omg_personnage:
+    resource: "@OmgPersonnageBundle/Resources/config/routing.yml"
+    prefix:   /
+
+omg_maison:
+    resource: "@OmgMaisonBundle/Resources/config/routing.yml"
+    prefix:   /
+
+app:
+    path:     /
+    defaults:   { _controller: OmgPersonnageBundle:Personnage:index }

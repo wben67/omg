@@ -1,0 +1,12 @@
+<form id="formsearch" name="formsearch" action="{{ path('omg_search_search') }}" method="post">
+	<label for="searchinput">Rechercher&nbsp;:&nbsp;</label>
+	<input type="text" name="searchinput" id="searchinput" placeholder="mot-cles" maxlength="255">
+	<label for "cb_maison">M.</label>
+	<input type="checkbox" name="cb_maison" value="bMais" />
+	<label for "cb_competence">C.</label>
+	<input type="checkbox" name="cb_competence" value="bComp" checked />
+	<label for "cb_personnage">P.</label>
+	<input type="checkbox" name="cb_personnage" value="bPers" checked />
+	<button type="submit">Ok!</button>
+</form>
+

@@ -1,0 +1,38 @@
+{% extends '::base.html.twig' %} 
+
+{% block title %}Maisons - Liste{% endblock %}
+
+{% block body %} 
+
+<h1>Liste des maisons</h1>
+
+<table>
+	<thead>
+	    <tr>
+	        <th>Nom</th><th>Description</th>
+	    </tr>
+	</thead>
+
+	<tfoot>
+		<tr>
+			<td colspan="2">
+				<a href="{{ path('omg_maison_add') }}" alt="Créer">Créer une Maison</a>
+			</td>
+		</tr>
+	</tfoot>
+
+	<tbody>
+    {% for maison in maisons %}
+    <tr>
+        <td><a href="{{ path('omg_maison_show', { 'id' : maison.id } ) }}">{{ maison.nom|e }}</a></td><td>{{ maison.description }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="2">Aucune maison trouvée</td>
+    </tr>
+    {% endfor %}
+	</tbody>
+</table>
+
+
+{% endblock %}

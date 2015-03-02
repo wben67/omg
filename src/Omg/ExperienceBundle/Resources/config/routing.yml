@@ -1,0 +1,3 @@
+omg_experience_homepage:
+    path:     /Experiences
+    defaults: { _controller: OmgExperienceBundle:Experiences:index }

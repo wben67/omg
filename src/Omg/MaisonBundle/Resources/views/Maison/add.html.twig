@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %} 
+
+{% block title %}Maison - {{ action }}{% endblock %}
+
+{% block body %} 
+<div class="addupdentity" id="personnage">
+    <div class="title">
+        <span class="libaction">{{ action }}</span> d'une maison
+    </div>
+
+    <div class="addupdbody">
+		<div class="maisonform">
+			{{ form(form) }}
+		</div>
+	</div>
+    <div class="action">
+        <div id="retour">
+			<a href="{{ path('omg_maison_homepage') }}" alt="Retour">Retour</a>
+		</div>
+	</div>
+</div>
+{% endblock %}

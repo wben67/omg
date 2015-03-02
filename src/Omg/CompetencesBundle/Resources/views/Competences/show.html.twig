@@ -1,0 +1,37 @@
+{% extends '::base.html.twig' %} 
+
+{% block title %}Compétences - Détail{% endblock %}
+
+{% block body %} 
+<div class="showentity" id="personnage">
+    <div class="title">
+        Détail d'une compétence
+    </div>
+    <div class="showbody">
+        <div id="nom">
+			Compétence <span class="field">{{ competence.nom }}</span>
+        </div>
+        <div id="description">
+			Description <span class="field">{{ competence.description }}</span>
+		</div>
+	</div>
+{% set bPers = false %}
+{% for pers in competence.personnages %}
+{% set bPers = true %}
+{% endfor %}
+	<div class=action>
+		<div id="modifier">
+			<a href="{{ path('omg_competence_upd', { 'id': competence.id }) }}" alt="Modifier la compétence">Modifier</a>
+		</div>
+		{% if not ( bPers ) %}
+		<div id="supprimer">
+			<a href="{{ path( 'omg_competence_del', { 'id':  competence.id } ) }}" alt="Supprimer la compétence">Supprimer</a>
+		</div>
+		{% endif %}
+		<div id="retour">
+			<a href="{{ path('omg_competences_homepage') }}" alt="Retour">Retour</a>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

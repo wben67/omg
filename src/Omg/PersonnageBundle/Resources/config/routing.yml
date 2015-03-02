@@ -1,0 +1,22 @@
+omg_personnage_homepage:
+    path:    /Personnages
+    defaults: { _controller: OmgPersonnageBundle:Personnage:index }
+
+omg_personnage_add:
+    path:    /Personnages/add
+    defaults: { _controller: OmgPersonnageBundle:Personnage:add }
+
+omg_personnage_upd:
+    path:    /Personnage/{id}/upd
+    defaults: { _controller: OmgPersonnageBundle:Personnage:upd }
+    requirements: { "id": "\d+" }
+
+omg_personnage_del:
+    path:    /Personnage/{id}/del
+    defaults: { _controller: OmgPersonnageBundle:Personnage:del }
+    requirements: { "id": "\d+" }
+
+omg_personnage_show:
+    path:     /Personnage/{id}
+    defaults: { _controller: OmgPersonnageBundle:Personnage:show }
+    requirements: { "id": "\d+" }

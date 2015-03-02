@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %} 
+
+{% block title %}Maison - Détail{% endblock %}
+
+{% block body %} 
+<div class="showentity" id="maison">
+    <div class="title">
+        Détail d'une maison
+    </div>
+    <div class="showbody">
+        <div id="nom">
+			Maison <span class="field">{{ maison.nom }}</span>
+        </div>
+        <div id="description">
+			Description <span class="field">{{ maison.description }}</span>
+        </div>
+        <div id="devise">
+			Devise  <span class="field">{{ maison.devise }}</span>
+        </div>
+        <div id="blason">
+			Blason <span class="field">{{ maison.blason }}</span>
+        </div>
+        <div id="personnage">
+			<div id="title">
+				Personnages appartenant à cette maison
+			</div>
+			<div id="liste">
+				{% set Supp = false %}
+				{% for personnage in maison.personnages %}
+				<span class="field">{{ personnage.nom }} - 
+				{% else %}
+				{% set Supp = true %}
+					Aucun personnage dans cette maison
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	<div class="action" >
+		<div id="modifier"><a href="{{ path('omg_maison_upd', { 'id' : maison.id } ) }}" alt="Modifier la maison">Modifier</a></div>
+		{% if Supp %}
+		<div id="supprimer"><a href="{{ path('omg_maison_del', { 'id' : maison.id } ) }}" alt="Supprimer la maison">Supprimer</a></div>
+		{% endif %}
+		<div id="retour"><a href="{{ path('omg_maison_homepage') }}" alt="Retour">Retour</a></div>
+	</div>
+</div>
+
+{% endblock %}
